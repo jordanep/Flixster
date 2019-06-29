@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.flixster.models.Movie;
@@ -29,16 +28,12 @@ import butterknife.BindView;
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
-// this is in the branch!
 public class MovieDetailsActivity extends AppCompatActivity {
 
     // the movie to display
     Movie movie;
 
     String videoKey;
-
-    AsyncHttpClient client;
-    Config config;
 
     // the view objects, resolved by ButterKnife
     /*@BindView(R.id.tvTitle)*/ TextView tvTitle;
@@ -47,14 +42,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
     /*@BindView(R.id.tvVoteAvgNum)*/ TextView tvVoteAvgNum;
     /*@BindView(R.id.tvReleaseDate)*/ TextView tvReleaseDate;
     ImageView ivVideo;
-    TextView tvDirections;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-
-        client = new AsyncHttpClient();
 
         tvTitle = findViewById(R.id.tvTitle);
         tvOverview = findViewById(R.id.tvOverview);
@@ -62,7 +54,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
         tvVoteAvgNum = findViewById(R.id.tvVoteAvgNum);
         tvReleaseDate = findViewById(R.id.tvReleaseDate);
         ivVideo = findViewById(R.id.ivVideo);
-        tvDirections = findViewById(R.id.tvDirections);
 
         // unwrap the movie passed in via intent, using its simple name as a key
         movie = (Movie) Parcels.unwrap(getIntent().getParcelableExtra(Movie.class.getSimpleName()));
@@ -98,8 +89,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
         tvReleaseDate.setText(String.format("Released: %s %s, %s", month, dateNums[2], dateNums[0]));
 
-        getConfiguration();
-        //getVideoKey(movie);
+        getVideoKey(movie);
     }
 
     public void playVideo(View view) {
@@ -117,6 +107,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         // set the request parameters
         RequestParams params = new RequestParams();
         params.put(MovieListActivity.API_KEY_PARAM, getString(R.string.api_key));
+        AsyncHttpClient client = new AsyncHttpClient();
         client.get(url, params, new JsonHttpResponseHandler() {
 
             @Override
@@ -131,51 +122,5 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void getConfiguration() {
-        // create the url
-        String url = MovieListActivity.API_BASE_URL + "/configuration";
-        // set the request parameters
-        RequestParams params = new RequestParams();
-        params.put(MovieListActivity.API_KEY_PARAM, getString(R.string.api_key)); // API key, always required
-        // execute a GET request expecting a JSON object response
-        client.get(url, params, new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    config = new Config(response);
-                    Log.i("MovieDetailsActivity", String.format("Loaded configuration with imageBaseUrl %s and posterSize %s",
-                            config.getImageBaseUrl(),
-                            config.getBackdropSize()));
-                    getBackdrop();
-                    getVideoKey(movie);
-                } catch (JSONException e) {
-                    logError("Failed parsing configuration", e, true);
-                }
-            }
-        });
-    }
-
-    private void getBackdrop() {
-        String imageUrl = config.getImageUrl(config.getBackdropSize(), movie.getBackdropPath());
-        Glide.with(this.getApplicationContext())
-                .load(imageUrl)
-                .bitmapTransform(new RoundedCornersTransformation(this.getApplicationContext(), 25, 0))
-                .placeholder(R.drawable.flixster_backdrop_placeholder)
-                .error(R.drawable.flixster_backdrop_placeholder)
-                .into(ivVideo);
-    }
-
-    // handle errors, log and alert user
-    private void logError(String message, Throwable error, boolean alertUser) {
-        // always log the error
-        Log.e("MovieDetailsActivity", message, error);
-        //alert the user to avoid silent errors
-        if (alertUser) {
-            //show a long toast with the error message
-            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-        }
     }
 }

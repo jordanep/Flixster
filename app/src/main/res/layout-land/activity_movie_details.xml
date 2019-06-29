@@ -2,9 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MovieDetailsActivity">
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivVideo"
+        android:layout_width="400dp"
+        android:layout_height="225dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:onClick="playVideo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDirections"
+        app:srcCompat="@drawable/flixster_backdrop_placeholder" />
 
     <TextView
         android:id="@+id/tvTitle"
@@ -32,19 +42,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
     <TextView
-        android:id="@+id/tvOverview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
-        android:text="Movie overview and synopsis"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvVoteAvgNum" />
-
-    <TextView
         android:id="@+id/tvVoteAvgNum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,47 +49,37 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="3dp"
         android:text="Rating"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintStart_toEndOf="@+id/rbVoteAverage"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
     <TextView
-        android:id="@+id/tvReleaseDate"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvOverview"
+        android:layout_width="270dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:text="Release Date"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
-
-    <ImageView
-        android:id="@+id/ivVideo"
-        android:layout_width="400dp"
-        android:layout_height="225dp"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:onClick="playVideo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:text="Movie overview and synopsis"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDirections"
-        app:srcCompat="@drawable/flixster_backdrop_placeholder" />
+        app:layout_constraintTop_toBottomOf="@+id/tvReleaseDate" />
 
     <TextView
         android:id="@+id/tvDirections"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Click image to watch trailer:"
+        app:layout_constraintStart_toStartOf="@+id/ivVideo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvReleaseDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
-        android:text="Click image to watch trailer:"
+        android:text="Release Date"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvOverview" />
-
+        app:layout_constraintTop_toBottomOf="@+id/tvVoteAvgNum" />
 </androidx.constraintlayout.widget.ConstraintLayout>
