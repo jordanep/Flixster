@@ -1,5 +1,8 @@
 package com.example.flixster.models;
 
+import com.example.flixster.MovieListActivity;
+import com.example.flixster.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +32,10 @@ public class Config {
     // helper method for creating urls
     public String getImageUrl(String size, String path) {
         return String.format("%s%s%s", imageBaseUrl, size, path); // concatenates all three
+    }
+
+    public String getVidUrl(String movie_id) {
+        return String.format("%s/movie/%s/videos?api_key=%s", MovieListActivity.API_BASE_URL, movie_id, R.string.api_key);
     }
 
     public String getImageBaseUrl() {

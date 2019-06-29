@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.BindView;
 import cz.msebera.android.httpclient.Header;
 
 import com.example.flixster.models.Movie;
@@ -37,8 +38,8 @@ public class MovieListActivity extends AppCompatActivity {
     AsyncHttpClient client;
     // the list of currently playing movies
     ArrayList<Movie> movies;
-    // the recycler view
-    RecyclerView rvMovies;
+    // the recycler view, resolved by ButterKnife
+    /*@BindView(R.id.rvMovies)*/ RecyclerView rvMovies;
     // the adapter wired to the recycler view
     MovieAdapter adapter;
     // image config
@@ -55,8 +56,8 @@ public class MovieListActivity extends AppCompatActivity {
         // initialize the adapter -- movies array cannot be reinstated after this point
         adapter = new MovieAdapter(movies);
 
-        //resolve the recycler view and connect a layout manager and the adapter
-        rvMovies = (RecyclerView) findViewById(R.id.rvMovies);
+        rvMovies = findViewById(R.id.rvMovies);
+        // connect a layout manager and the adapter to the recycler view
         rvMovies.setLayoutManager(new LinearLayoutManager(this));
         rvMovies.setAdapter(adapter);
 
@@ -104,10 +105,10 @@ public class MovieListActivity extends AppCompatActivity {
     private void getConfiguration() {
         // create the url
         String url = API_BASE_URL + "/configuration";
-        //set the request parameters
+        // set the request parameters
         RequestParams params = new RequestParams();
         params.put(API_KEY_PARAM, getString(R.string.api_key)); // API key, always required
-        //execute a GET request expecting a JSON object response
+        // execute a GET request expecting a JSON object response
         client.get(url, params, new JsonHttpResponseHandler() {
 
             @Override
