@@ -1,8 +1,15 @@
 package com.example.flixster.models;
 
+import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
+import org.parceler.Transient;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 @Parcel // annotation indicates class in Parcelable
 public class Movie {
@@ -16,6 +23,7 @@ public class Movie {
     Double voteAverage;
     String releaseDate;
     Integer id;
+    ArrayList<Integer> genre_ids = new ArrayList<>();
 
     // no-arg, empty constructor required for Parceler
     public Movie() {}
@@ -29,6 +37,14 @@ public class Movie {
         voteAverage = object.getDouble("vote_average");
         releaseDate = object.getString("release_date");
         id = object.getInt("id");
+        JSONArray results = object.getJSONArray("genre_ids");
+        for (int i = 0; i < results.length(); i++) {
+            try {
+                genre_ids.add(results.getInt(i));
+            } catch (JSONException e) {
+                Log.e("MovieDetailsActivity", "Error parsing genre ids");
+            }
+        }
     }
 
     public String getTitle() {
@@ -57,5 +73,9 @@ public class Movie {
 
     public Integer getId() {
         return id;
+    }
+
+    public ArrayList<Integer> getGenre_ids() {
+        return genre_ids;
     }
 }

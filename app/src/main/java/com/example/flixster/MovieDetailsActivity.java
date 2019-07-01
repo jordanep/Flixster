@@ -25,6 +25,8 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -36,6 +38,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     Movie movie;
 
     String videoKey;
+    String genres;
 
     AsyncHttpClient client;
     Config config;
@@ -48,6 +51,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     /*@BindView(R.id.tvReleaseDate)*/ TextView tvReleaseDate;
     ImageView ivVideo;
     TextView tvDirections;
+    TextView tvGenres;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         tvReleaseDate = findViewById(R.id.tvReleaseDate);
         ivVideo = findViewById(R.id.ivVideo);
         tvDirections = findViewById(R.id.tvDirections);
+        tvGenres = findViewById(R.id.tvGenres);
 
         // unwrap the movie passed in via intent, using its simple name as a key
         movie = (Movie) Parcels.unwrap(getIntent().getParcelableExtra(Movie.class.getSimpleName()));
@@ -98,8 +103,42 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
         tvReleaseDate.setText(String.format("Released: %s %s, %s", month, dateNums[2], dateNums[0]));
 
+        getGenreMeanings();
+
         getConfiguration();
-        //getVideoKey(movie);
+
+    }
+
+    public void getGenreMeanings() {
+        String genre_url = MovieListActivity.API_BASE_URL + "/genre/movie/list";
+        RequestParams genre_params = new RequestParams();
+        genre_params.add(MovieListActivity.API_KEY_PARAM, getString(R.string.api_key));
+        client.get(genre_url, genre_params, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                ArrayList<String> genre_names = new ArrayList<>();
+                try {
+                    JSONArray results = response.getJSONArray("genres");
+                    ArrayList<Integer> genre_ids = movie.getGenre_ids();
+                    for (int i = 0; i < results.length(); i++) {
+                        JSONObject genre = results.getJSONObject(i);
+                        if (genre_ids.contains(genre.get("id"))) {
+                            genre_names.add((String) genre.get("name"));
+                        }
+                    }
+                    genres = genre_names.get(0);
+                    for (int i = 1; i < genre_names.size(); i++) {
+                        genres += ", " + genre_names.get(i);
+                    }
+                    Log.i("MovieDetailsActivity", "Loaded genres list: " + genres);
+                    tvGenres.setText("Genres: " + genres);
+                } catch (JSONException e) {
+                    genre_names.add("Error determining genres");
+                    Log.e("MovieDetailsActivity", "Error parsing genre names");
+                }
+            }
+        });
     }
 
     public void playVideo(View view) {
